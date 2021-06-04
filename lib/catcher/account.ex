@@ -17,8 +17,8 @@ defmodule Catcher.Account do
       [%User{}, ...]
 
   """
-  def list_users do
-    Repo.all(User)
+  def list_users(params) do
+    Repo.pagination_query(User, params)
   end
 
   @doc """

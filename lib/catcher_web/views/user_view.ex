@@ -2,8 +2,8 @@ defmodule CatcherWeb.UserView do
   use CatcherWeb, :view
   alias CatcherWeb.UserView
 
-  def render("index.json", %{users: users}) do
-    %{data: render_many(users, UserView, "user.json")}
+  def render("index.json", %{pageable: {users, page}}) do
+    %{data: render_many(users, UserView, "user.json"), pagination: page}
   end
 
   def render("show.json", %{user: user}) do
