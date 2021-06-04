@@ -3,8 +3,8 @@ defmodule Catcher.Account.User do
   import Ecto.Changeset
 
   schema "users" do
-    field :email, :string
-    field :nick, :string
+    field :email, :string, default: "null"
+    field :nick, :string, default: "null"
 
     timestamps()
   end
@@ -14,6 +14,5 @@ defmodule Catcher.Account.User do
     user
     |> cast(attrs, [:email, :nick])
     |> validate_required([:email, :nick])
-    |> unique_constraint(:email)
   end
 end

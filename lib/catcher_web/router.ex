@@ -7,7 +7,9 @@ defmodule CatcherWeb.Router do
 
   scope "/api", CatcherWeb do
     pipe_through :api
-    resources "/users", UserController, except: [:new, :edit]
+    resources "/users", UserController, except: [:new, :edit, :update]
+    put "/users/:id", UserController, :update
+    patch "/users/:id", UserController, :patch
 
   end
 
