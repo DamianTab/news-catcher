@@ -9,3 +9,7 @@
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
+
+Catcher.Repo.insert!(%Catcher.Account.User{email: "damian.tabaka@gmail.com", nick: "tabaka"})
+Catcher.Repo.insert!(%Catcher.Account.User{email: "admin.admin@gmail.com", nick: "admin"})
+Catcher.Repo.insert!(%Catcher.Account.User{email: "test.test@gmail.com", nick: "test"})

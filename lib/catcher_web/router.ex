@@ -7,6 +7,8 @@ defmodule CatcherWeb.Router do
 
   scope "/api", CatcherWeb do
     pipe_through :api
+    resources "/users", UserController, except: [:new, :edit]
+
   end
 
   # Enables LiveDashboard only for development
