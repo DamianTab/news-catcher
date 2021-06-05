@@ -15,4 +15,11 @@ defmodule CatcherWeb.UserView do
       email: user.email,
       nick: user.nick}
   end
+
+  # ETAG LIBRARY
+  def stale_checks("show." <> _format, %{user: data}) do
+    [etag: PhoenixETag.schema_etag(data),
+      last_modified: PhoenixETag.schema_last_modified(data)]
+  end
+
 end

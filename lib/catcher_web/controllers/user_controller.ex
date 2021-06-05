@@ -21,23 +21,15 @@ defmodule CatcherWeb.UserController do
 
   def show(conn, %{"id" => id}) do
     user = Account.get_user!(id)
-    render(conn, "show.json", user: user)
+    PhoenixETag.render_if_stale(conn, "show.json", user: user)
   end
 
-  def update(conn, %{"id" => id, "user" => %{"email" => _email, "nick" => _nick} = user_params}) do
-    user = Account.get_user!(id)
-
-    with {:ok, %User{} = user} <- Account.update_user(user, user_params) do
-      render(conn, "show.json", user: user)
-    end
+  def update(conn, %{"id" => _id, "user" => %{"email" => _email, "nick" => _nick}} = params ) do
+    update_user(conn, params)
   end
 
-  def patch(conn, %{"id" => id, "user" => user_params}) do
-    user = Account.get_user!(id)
-
-    with {:ok, %User{} = user} <- Account.update_user(user, user_params) do
-      render(conn, "show.json", user: user)
-    end
+  def patch(conn, %{"id" => _id, "user" => _user_params} = params) do
+    update_user(conn, params)
   end
 
   def delete(conn, %{"id" => id}) do
@@ -47,4 +39,17 @@ defmodule CatcherWeb.UserController do
       send_resp(conn, :no_content, "")
     end
   end
+
+  defp update_user(conn, %{"id" => id, "user" => user_params}) do
+    user = Account.get_user!(id)
+
+    case CatcherWeb.EtagHelper.etag_matches?(conn, user) do
+      false -> send_resp(conn, :precondition_failed, "")
+      true ->
+        with {:ok, %User{} = user} <- Account.update_user(user, user_params) do
+          PhoenixETag.render_if_stale(conn, "show.json", user: user)
+        end
+    end
+  end
+
 end
