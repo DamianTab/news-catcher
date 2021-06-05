@@ -10,21 +10,22 @@ defmodule CatcherWeb.ArticleController do
   def index(conn, params) do
     case find_article_param(params)
      do
-      :nil -> index_from_database(conn, params)
+      :nil ->
+        index_from_database(conn, params)
+
       _search_query_param ->
-        IO.inspect("lol111")
+
+        if Enum.find(Map.keys(params), fn key -> key == "query" end) do
+          IO.inspect("lol111")
+          # todo zrobic zapytania
+        else
+          conn
+          |> put_status(:bad_request)
+          |> put_view(CatcherWeb.ErrorView)
+          |> render("missing_search_query.json")
+        end
+
      end
-
-    # IO.inspect(value)
-
-    # filtered_article_params
-    # |> Enum.each(fn key -> IO.inspect(key) end)
-
-    # Enum.each(params, fn {key, _} -> IO.inspect(key) end)
-
-    # IO.puts(params["from"])
-
-
   end
 
   # def create(conn, %{"article" => article_params}) do
