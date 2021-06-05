@@ -3,12 +3,28 @@ defmodule CatcherWeb.ArticleController do
 
   alias Catcher.News
   alias Catcher.News.Article
+  alias Catcher.News.ArticleParams
 
   action_fallback CatcherWeb.FallbackController
 
   def index(conn, params) do
-    pageable = News.list_articles(params)
-    render(conn, "index.json", pageable: pageable)
+    case find_article_param(params)
+     do
+      :nil -> index_from_database(conn, params)
+      _search_query_param ->
+        IO.inspect("lol111")
+     end
+
+    # IO.inspect(value)
+
+    # filtered_article_params
+    # |> Enum.each(fn key -> IO.inspect(key) end)
+
+    # Enum.each(params, fn {key, _} -> IO.inspect(key) end)
+
+    # IO.puts(params["from"])
+
+
   end
 
   # def create(conn, %{"article" => article_params}) do
@@ -36,6 +52,17 @@ defmodule CatcherWeb.ArticleController do
   def delete_all(conn, _params) do
       News.delete_all_articles
       send_resp(conn, :no_content, "")
+  end
+
+  defp find_article_param(params) do
+    filtered_article_params = ArticleParams.filtred_string_keys()
+    Map.keys(params)
+      |> Enum.find(fn key -> key in filtered_article_params end)
+  end
+
+  defp index_from_database(conn, params) do
+    pageable = News.list_articles(params)
+    render(conn, "index.json", pageable: pageable)
   end
 
 end
