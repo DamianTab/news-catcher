@@ -4,6 +4,7 @@ defmodule CatcherWeb.ArticleController do
   alias Catcher.News
   alias Catcher.News.Article
   alias Catcher.News.ArticleParams
+  alias Catcher.News.HttpClient
 
   action_fallback CatcherWeb.FallbackController
 
@@ -14,10 +15,12 @@ defmodule CatcherWeb.ArticleController do
         index_from_database(conn, params)
 
       _search_query_param ->
-
-        if Enum.find(Map.keys(params), fn key -> key == "query" end) do
-          IO.inspect("lol111")
-          # todo zrobic zapytania
+        if ArticleParams.query_param_exist_and_not_empty?("query", params) do
+          HttpClient.search_articles(params)
+          conn
+          |> put_status(:bad_request)
+          |> put_view(CatcherWeb.ErrorView)
+          |> render("missing_search_query.json")
         else
           conn
           |> put_status(:bad_request)
@@ -56,7 +59,7 @@ defmodule CatcherWeb.ArticleController do
   end
 
   defp find_article_param(params) do
-    filtered_article_params = ArticleParams.filtred_string_keys()
+    filtered_article_params = ArticleParams.unique_string_keys()
     Map.keys(params)
       |> Enum.find(fn key -> key in filtered_article_params end)
   end
