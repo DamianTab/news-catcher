@@ -3,7 +3,7 @@ defmodule Catcher.Repo.Migrations.CreateArticles do
 
   def change do
     create table(:articles) do
-      add :summary, :string
+      add :summary, :text
       add :country, :string
       add :author, :string
       add :link, :string
