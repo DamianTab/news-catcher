@@ -15,6 +15,10 @@ defmodule CatcherWeb.ErrorView do
     %{errors: %{detail: "Missing query param"}}
   end
 
+  def render("search_engine_error.json", %{message: message}) do
+    %{errors: %{detail: message}}
+  end
+
   def template_not_found(template, _assigns) do
     %{errors: %{detail: Phoenix.Controller.status_message_from_template(template)}}
   end

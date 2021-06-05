@@ -4,7 +4,7 @@ defmodule Catcher.News.HttpClient do
   @api_url ~s(https://newscatcher.p.rapidapi.com/v1/search)
 
   def search_articles(params) do
-    headers = ["x-rapidapi-key": "a07310d6eemshb4b7333c5a87796p1a3c3cjsn64aaccca4d36"]
+    headers = ["x-rapidapi-key": ArticleParams.default_values.x_rapidAPI_key]
     options = [params: generate_query_params(params)]
     execute_request(@api_url, headers, options)
   end
@@ -15,10 +15,10 @@ defmodule Catcher.News.HttpClient do
         {:ok, body}
 
       {:ok, %HTTPoison.Response{status_code: 429}} ->
-        {:error, "Too many Request - limit exceeded. Try again in an hour."}
+        {:error, "Too many request on search engine - limit exceeded. Try again in an hour."}
 
       {:ok, %HTTPoison.Response{status_code: 404}} ->
-        {:error, "Not found."}
+        {:error, "Not found search engine resource."}
 
       {:ok, %HTTPoison.Response{status_code: _}} ->
         {:error, "Unknown error on search engine - contact developer."}
@@ -58,6 +58,8 @@ defmodule Catcher.News.HttpClient do
           end
         end)
       |> Map.new()
+      # Należy dodać na koniec by pobierało media
+      |> Map.put("media", "True")
   end
 
 end
