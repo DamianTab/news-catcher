@@ -2,8 +2,8 @@ defmodule CatcherWeb.ArticleView do
   use CatcherWeb, :view
   alias CatcherWeb.ArticleView
 
-  def render("index.json", %{articles: articles}) do
-    %{data: render_many(articles, ArticleView, "article.json")}
+  def render("index.json", %{pageable: {articles, page}}) do
+    %{data: render_many(articles, ArticleView, "article.json"), pagination: page}
   end
 
   def render("show.json", %{article: article}) do
@@ -23,4 +23,10 @@ defmodule CatcherWeb.ArticleView do
       topic: article.topic,
       published_date: article.published_date}
   end
+
+  def stale_checks("show." <> _format, %{article: data}) do
+    [etag: PhoenixETag.schema_etag(data),
+      last_modified: PhoenixETag.schema_last_modified(data)]
+  end
+
 end

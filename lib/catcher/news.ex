@@ -17,8 +17,8 @@ defmodule Catcher.News do
       [%Article{}, ...]
 
   """
-  def list_articles do
-    Repo.all(Article)
+  def list_articles(params) do
+    Repo.pagination_query(Article, params)
   end
 
   @doc """
@@ -100,5 +100,9 @@ defmodule Catcher.News do
   """
   def change_article(%Article{} = article, attrs \\ %{}) do
     Article.changeset(article, attrs)
+  end
+
+  def delete_all_articles do
+    Repo.delete_all(Article)
   end
 end
