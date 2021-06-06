@@ -6,7 +6,7 @@ defmodule CatcherWeb.UserController do
 
   action_fallback CatcherWeb.FallbackController
 
-  def index(conn, params) do
+  def index(conn,  params) do
     pageable = Account.list_users(params)
     render(conn, "index.json", pageable: pageable)
   end

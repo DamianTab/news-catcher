@@ -40,3 +40,15 @@ Catcher.Repo.insert!(%Catcher.News.Article{
   topic: "politics",
   published_date: ~N[2019-04-23 10:20:00]
 })
+
+Catcher.Repo.insert!(%Catcher.Account.Favourite{
+  user_id: 1,
+  article_id: 1,
+  comment: "Fajny artykuł"
+})
+
+Catcher.Repo.insert!(%Catcher.Account.Favourite{
+  user_id: 2,
+  article_id: 2,
+  comment: "Nie fajny artykuł"
+})
