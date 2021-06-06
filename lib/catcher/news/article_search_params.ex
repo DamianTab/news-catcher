@@ -1,5 +1,4 @@
 defmodule Catcher.News.ArticleSearchParams do
-
   # default params
   @x_rapidAPI_key ~s(a07310d6eemshb4b7333c5a87796p1a3c3cjsn64aaccca4d36)
   @page ~s(20)
@@ -20,7 +19,17 @@ defmodule Catcher.News.ArticleSearchParams do
   # w kodzie jest data wykonania zapytania czyli NaiveDateTime.to_string(NaiveDateTime.local_now())
   @to ~s(Example date format: 2021-06-01 00:00:00)
 
-  defstruct page: @page, page_size: @page_size, query: @query, lang: @lang, sort_by: @sort_by, from: @from, to: @to, topic: @topic, sources: @sources, x_rapidAPI_key: @x_rapidAPI_key
+  @derive {Jason.Encoder, only: ~w(page page_size query lang sort_by from to topic sources)a}
+  defstruct page: @page,
+            page_size: @page_size,
+            query: @query,
+            lang: @lang,
+            sort_by: @sort_by,
+            from: @from,
+            to: @to,
+            topic: @topic,
+            sources: @sources,
+            x_rapidAPI_key: @x_rapidAPI_key
 
   def default_values do
     __struct__()
@@ -35,18 +44,18 @@ defmodule Catcher.News.ArticleSearchParams do
   end
 
   def string_keys do
-   __struct__()
+    __struct__()
     |> Map.keys()
     |> List.delete(:__struct__)
     |> Enum.map(fn key -> Atom.to_string(key) end)
   end
 
   def query_param_exist_and_not_empty?(name, params_list) do
-    Enum.find(Map.keys(params_list), fn key -> key == name end)
-      && query_param_not_empty?(params_list[name])
+    Enum.find(Map.keys(params_list), fn key -> key == name end) &&
+      query_param_not_empty?(params_list[name])
   end
 
   def query_param_not_empty?(param) do
-    String.length(String.trim param) != 0
+    String.length(String.trim(param)) != 0
   end
 end

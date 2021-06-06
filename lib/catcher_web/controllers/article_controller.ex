@@ -15,6 +15,12 @@ defmodule CatcherWeb.ArticleController do
     end
   end
 
+  def index_params(conn, _params) do
+    article_search_params = ArticleSearchParams.default_values()
+    Jason.encode!(article_search_params)
+    send_resp(conn, 200, Jason.encode!(article_search_params, pretty: true))
+  end
+
   def show(conn, %{"id" => id}) do
     article = News.get_article!(id)
     PhoenixETag.render_if_stale(conn, "show.json", article: article)
