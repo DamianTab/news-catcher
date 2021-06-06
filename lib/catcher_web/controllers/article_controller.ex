@@ -1,24 +1,25 @@
 defmodule CatcherWeb.ArticleController do
   use CatcherWeb, :controller
-
   alias Catcher.News
-  alias Catcher.News.Article
+  alias Catcher.News.{Article, ArticleSearchParams, HttpClient, ArticleParser}
 
   action_fallback CatcherWeb.FallbackController
 
   def index(conn, params) do
-    pageable = News.list_articles(params)
-    render(conn, "index.json", pageable: pageable)
+    case find_search_engine_param(params) do
+      nil ->
+        index_from_database(conn, params)
+
+      _search_query_param ->
+        index_from_search_engine(conn, params)
+    end
   end
 
-  # def create(conn, %{"article" => article_params}) do
-  #   with {:ok, %Article{} = article} <- News.create_article(article_params) do
-  #     conn
-  #     |> put_status(:created)
-  #     |> put_resp_header("location", Routes.article_path(conn, :show, article))
-  #     |> render("show.json", article: article)
-  #   end
-  # end
+  def index_params(conn, _params) do
+    article_search_params = ArticleSearchParams.default_values()
+    Jason.encode!(article_search_params)
+    send_resp(conn, 200, Jason.encode!(article_search_params, pretty: true))
+  end
 
   def show(conn, %{"id" => id}) do
     article = News.get_article!(id)
@@ -34,8 +35,41 @@ defmodule CatcherWeb.ArticleController do
   end
 
   def delete_all(conn, _params) do
-      News.delete_all_articles
-      send_resp(conn, :no_content, "")
+    News.delete_all_articles()
+    send_resp(conn, :no_content, "")
   end
 
+  defp find_search_engine_param(params) do
+    filtered_article_params = ArticleSearchParams.unique_string_keys()
+
+    Map.keys(params)
+    |> Enum.find(fn key -> key in filtered_article_params end)
+  end
+
+  defp index_from_database(conn, params) do
+    pageable = News.list_articles(params)
+    render(conn, "index.json", pageable: pageable)
+  end
+
+  defp index_from_search_engine(conn, params) do
+    if ArticleSearchParams.query_param_exist_and_not_empty?("query", params) do
+      case HttpClient.search_articles(params) do
+        {:ok, body} ->
+          {articles_bare_data, page} = ArticleParser.parse(body)
+          articles = News.create_articles!(articles_bare_data)
+          render(conn, "index.json", pageable: {articles, page})
+
+        {:error, message} ->
+          conn
+          |> put_status(:internal_server_error)
+          |> put_view(CatcherWeb.ErrorView)
+          |> render("search_engine_error.json", message: message)
+      end
+    else
+      conn
+      |> put_status(:bad_request)
+      |> put_view(CatcherWeb.ErrorView)
+      |> render("missing_search_query.json")
+    end
+  end
 end

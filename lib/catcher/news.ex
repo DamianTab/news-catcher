@@ -105,4 +105,17 @@ defmodule Catcher.News do
   def delete_all_articles do
     Repo.delete_all(Article)
   end
+
+  def create_article!(attrs \\ %{}) do
+    %Article{}
+    |> Article.changeset(attrs)
+    |> Repo.insert!()
+  end
+
+  def create_articles!(articles_data) do
+    articles_data
+    |> Enum.map(fn bare_data ->
+      create_article!(bare_data)
+    end)
+  end
 end

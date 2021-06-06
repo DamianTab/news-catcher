@@ -13,6 +13,7 @@ defmodule CatcherWeb.Router do
     patch "/users/:id", UserController, :patch
 
     get "/news", ArticleController, :index
+    get "/news/params", ArticleController, :index_params
     get "/news/:id", ArticleController, :show
     delete "/news/", ArticleController, :delete_all
     delete "/news/:id", ArticleController, :delete

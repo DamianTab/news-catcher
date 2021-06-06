@@ -11,7 +11,8 @@ defmodule CatcherWeb.ArticleView do
   end
 
   def render("article.json", %{article: article}) do
-    %{id: article.id,
+    %{
+      id: article.id,
       summary: article.summary,
       country: article.country,
       author: article.author,

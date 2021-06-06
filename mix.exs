@@ -44,7 +44,8 @@ defmodule Catcher.MixProject do
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
       {:phoenix_pagination, "~> 0.7.0"},
-      {:phoenix_etag, "~> 0.1"}
+      {:phoenix_etag, "~> 0.1"},
+      {:httpoison, "~> 1.8"}
     ]
   end
 
