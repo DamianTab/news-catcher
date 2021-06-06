@@ -77,8 +77,8 @@ defmodule CatcherWeb.ArticleController do
   defp search_in_external_api(conn, efficient_params, request_structure) do
     case HttpClient.search_articles(efficient_params) do
       {:ok, body} ->
-        {articles_bare_data, page} = ArticleParser.parse(body)
-        articles = News.create_articles!(articles_bare_data)
+        {articles_raw_data, page} = ArticleParser.parse(body)
+        articles = News.create_articles!(articles_raw_data)
         Cache.insert_with_articles!(request_structure, articles, page)
         render(conn, "index.json", pageable: {articles, page})
 

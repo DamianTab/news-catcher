@@ -114,9 +114,31 @@ defmodule Catcher.News do
 
   def create_articles!(articles_data) do
     articles_data
-    |> Enum.map(fn bare_data ->
-      # todo optymalizacja by nie dodawał jeśli takie istnieją
-      create_article!(bare_data)
+    |> Enum.map(fn raw_data ->
+      case check_article_duplicate(raw_data) do
+        nil ->
+          create_article!(raw_data)
+        article_from_db ->
+          article_from_db
+      end
+
     end)
+  end
+
+  defp check_article_duplicate(raw_data) do
+    Repo.one(
+        Article
+        |> where([a],
+          a.author == ^raw_data.author and
+          a.country == ^raw_data.country and
+          a.language == ^raw_data.language and
+          a.link == ^raw_data.link and
+          a.published_date == ^raw_data.published_date and
+          a.rights == ^raw_data.rights and
+          a.summary == ^raw_data.summary and
+          a.title == ^raw_data.title and
+          a.topic == ^raw_data.topic)
+        |> select([a], a)
+      )
   end
 end
