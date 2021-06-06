@@ -1,12 +1,12 @@
 defmodule CatcherWeb.ArticleController do
   use CatcherWeb, :controller
   alias Catcher.News
-  alias Catcher.News.{Article, ArticleParams, HttpClient, ArticleParser}
+  alias Catcher.News.{Article, ArticleSearchParams, HttpClient, ArticleParser}
 
   action_fallback CatcherWeb.FallbackController
 
   def index(conn, params) do
-    case find_article_param(params) do
+    case find_search_engine_param(params) do
       nil ->
         index_from_database(conn, params)
 
@@ -14,15 +14,6 @@ defmodule CatcherWeb.ArticleController do
         index_from_search_engine(conn, params)
     end
   end
-
-  # def create(conn, %{"article" => article_params}) do
-  #   with {:ok, %Article{} = article} <- News.create_article(article_params) do
-  #     conn
-  #     |> put_status(:created)
-  #     |> put_resp_header("location", Routes.article_path(conn, :show, article))
-  #     |> render("show.json", article: article)
-  #   end
-  # end
 
   def show(conn, %{"id" => id}) do
     article = News.get_article!(id)
@@ -42,8 +33,8 @@ defmodule CatcherWeb.ArticleController do
     send_resp(conn, :no_content, "")
   end
 
-  defp find_article_param(params) do
-    filtered_article_params = ArticleParams.unique_string_keys()
+  defp find_search_engine_param(params) do
+    filtered_article_params = ArticleSearchParams.unique_string_keys()
 
     Map.keys(params)
     |> Enum.find(fn key -> key in filtered_article_params end)
@@ -55,12 +46,12 @@ defmodule CatcherWeb.ArticleController do
   end
 
   defp index_from_search_engine(conn, params) do
-    if ArticleParams.query_param_exist_and_not_empty?("query", params) do
+    if ArticleSearchParams.query_param_exist_and_not_empty?("query", params) do
       case HttpClient.search_articles(params) do
         {:ok, body} ->
-          pageable = ArticleParser.parse(body)
-          # todo zapisywanie w bazie
-          render(conn, "index.json", pageable: pageable)
+          {articles_bare_data, page} = ArticleParser.parse(body)
+          articles = News.create_articles!(articles_bare_data)
+          render(conn, "index.json", pageable: {articles, page})
 
         {:error, message} ->
           conn

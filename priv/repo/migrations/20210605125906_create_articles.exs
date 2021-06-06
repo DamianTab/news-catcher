@@ -6,10 +6,10 @@ defmodule Catcher.Repo.Migrations.CreateArticles do
       add :summary, :text
       add :country, :string
       add :author, :string
-      add :link, :string
+      add :link, :text
       add :language, :string
-      add :media, :string
-      add :title, :string
+      add :media, :text
+      add :title, :text
       add :rights, :string
       add :topic, :string
       add :published_date, :naive_datetime

@@ -10,7 +10,7 @@ defmodule Catcher.News.ArticleParser do
       body
       |> Jason.decode!()
       |> Map.take(@expected__body_fields)
-      |> Map.update!("articles", fn values -> deserialize_articles(values) end)
+      |> Map.update!("articles", fn v -> deserialize_articles(v) end)
       |> Map.new(fn {k, v} -> {String.to_atom(k), v} end)
 
     page = %{
@@ -30,7 +30,20 @@ defmodule Catcher.News.ArticleParser do
     |> Enum.map(fn article ->
       article
       |> Map.take(Article.string_keys())
-      |> Map.new(fn {k, v} -> {String.to_atom(k), v} end)
+      |> remap_for_atoms_and_nil_values()
     end)
   end
+
+  # zamiana kluczy na atomy + wyeliminowanie pustych wartości
+  defp remap_for_atoms_and_nil_values(map) do
+    map
+    |> Map.new(fn {k, v} ->
+      if !v do
+        if k == :published_date, do: {String.to_atom(k), ~N(1960-01-01 00:00:00)}, else: {String.to_atom(k), "null"}
+      else
+        {String.to_atom(k), v}
+      end
+    end)
+  end
+
 end

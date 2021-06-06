@@ -1,8 +1,8 @@
-defmodule Catcher.News.ArticleParams do
+defmodule Catcher.News.ArticleSearchParams do
 
   # default params
   @x_rapidAPI_key ~s(a07310d6eemshb4b7333c5a87796p1a3c3cjsn64aaccca4d36)
-  @page ~s(1)
+  @page ~s(20)
   @page_size ~s(5)
   @from ~s(2020-01-01 00:00:00)
 

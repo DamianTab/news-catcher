@@ -12,8 +12,7 @@ defmodule CatcherWeb.ArticleView do
 
   def render("article.json", %{article: article}) do
     %{
-      # todo tutaj to naprawić najpierw wstawiając do bazy danych
-      # id: article.id,
+      id: article.id,
       summary: article.summary,
       country: article.country,
       author: article.author,
