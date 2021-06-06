@@ -115,6 +115,7 @@ defmodule Catcher.News do
   def create_articles!(articles_data) do
     articles_data
     |> Enum.map(fn bare_data ->
+      # todo optymalizacja by nie dodawał jeśli takie istnieją
       create_article!(bare_data)
     end)
   end

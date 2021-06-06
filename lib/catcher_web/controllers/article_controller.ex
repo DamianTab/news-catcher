@@ -61,12 +61,9 @@ defmodule CatcherWeb.ArticleController do
       case Cache.get_by_fields_values(fake_request) do
         nil ->
           search_in_external_api(conn, efficient_params, fake_request)
-        request ->
-          IO.puts("DZILA ++++++++++++++++++++++++++++")
-          nil
-          raise nil
-          # todo odtworzyć z bazy
 
+        request ->
+          render(conn, "index.json", pageable: {request.articles, Jason.decode!(request.pagination)})
       end
 
     else

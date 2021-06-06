@@ -138,8 +138,6 @@ defmodule Catcher.Cache do
       r.topic == ^fake_request.topic)
       |> select([r], r)
     )
-
-    # todo preload kiedy nie nul
-    # |> Repo.preload(:articles)
+    |> Repo.preload(:articles)
   end
 end
