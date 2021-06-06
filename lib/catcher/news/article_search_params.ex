@@ -43,19 +43,7 @@ defmodule Catcher.News.ArticleSearchParams do
     string_keys() -- ["x_rapidAPI_key"]
   end
 
-  def string_keys do
-    __struct__()
-    |> Map.keys()
-    |> List.delete(:__struct__)
-    |> Enum.map(fn key -> Atom.to_string(key) end)
-  end
-
-  def query_param_exist_and_not_empty?(name, params_list) do
-    Enum.find(Map.keys(params_list), fn key -> key == name end) &&
-      query_param_not_empty?(params_list[name])
-  end
-
-  def query_param_not_empty?(param) do
-    String.length(String.trim(param)) != 0
+  defp string_keys do
+    Catcher.News.ParamsHelper.struct_keys_as_string(__struct__())
   end
 end

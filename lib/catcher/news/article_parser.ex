@@ -29,7 +29,7 @@ defmodule Catcher.News.ArticleParser do
     articles
     |> Enum.map(fn article ->
       article
-      |> Map.take(Article.string_keys())
+      |> Map.take(Catcher.News.ParamsHelper.struct_keys_as_string(Article.__struct__()))
       |> remap_for_atoms_and_nil_values()
     end)
   end
@@ -39,11 +39,12 @@ defmodule Catcher.News.ArticleParser do
     map
     |> Map.new(fn {k, v} ->
       if !v do
-        if k == :published_date, do: {String.to_atom(k), ~N(1960-01-01 00:00:00)}, else: {String.to_atom(k), "null"}
+        if k == :published_date,
+          do: {String.to_atom(k), ~N(1960-01-01 00:00:00)},
+          else: {String.to_atom(k), "null"}
       else
         {String.to_atom(k), v}
       end
     end)
   end
-
 end

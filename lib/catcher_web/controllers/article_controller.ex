@@ -1,7 +1,7 @@
 defmodule CatcherWeb.ArticleController do
   use CatcherWeb, :controller
   alias Catcher.News
-  alias Catcher.News.{Article, ArticleSearchParams, HttpClient, ArticleParser}
+  alias Catcher.News.{Article, ArticleSearchParams, HttpClient, ArticleParser, ParamsMapper, ParamsHelper}
 
   action_fallback CatcherWeb.FallbackController
 
@@ -52,8 +52,10 @@ defmodule CatcherWeb.ArticleController do
   end
 
   defp index_from_search_engine(conn, params) do
-    if ArticleSearchParams.query_param_exist_and_not_empty?("query", params) do
-      case HttpClient.search_articles(params) do
+    if ParamsHelper.param_exist_and_not_empty?("query", params) do
+      efficient_params = ParamsMapper.generate_query_params(params)
+
+      case HttpClient.search_articles(efficient_params) do
         {:ok, body} ->
           {articles_bare_data, page} = ArticleParser.parse(body)
           articles = News.create_articles!(articles_bare_data)

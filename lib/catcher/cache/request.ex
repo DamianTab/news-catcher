@@ -22,6 +22,6 @@ defmodule Catcher.Cache.Request do
   def changeset(request, attrs) do
     request
     |> cast(attrs, [:page, :page_size, :query, :lang, :sort_by, :from, :to, :topic, :sources])
-    |> validate_required([:page, :page_size, :query, :lang, :sort_by, :from, :to, :topic, :sources])
+    |> validate_required([:query])
   end
 end
