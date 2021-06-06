@@ -204,4 +204,14 @@ defmodule Catcher.Account do
   def change_favourite(%Favourite{} = favourite, attrs \\ %{}) do
     Favourite.changeset(favourite, attrs)
   end
+
+  def migrate_users(user1, user2) do
+    query = Favourite
+            |> where([f], f.user_id == ^user2)
+    for favourite <- Repo.all(query) do
+      update_favourite(favourite, %{"user_id" => user1})
+    end
+    userToDelete = get_user!(user2)
+    delete_user(userToDelete)
+  end
 end

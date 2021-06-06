@@ -122,4 +122,61 @@ defmodule Catcher.AccountTest do
       assert %Ecto.Changeset{} = Account.change_favourite(favourite)
     end
   end
+
+  describe "migrations" do
+    alias Catcher.Account.Migration
+
+    @valid_attrs %{}
+    @update_attrs %{}
+    @invalid_attrs %{}
+
+    def migration_fixture(attrs \\ %{}) do
+      {:ok, migration} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Account.create_migration()
+
+      migration
+    end
+
+    test "list_migrations/0 returns all migrations" do
+      migration = migration_fixture()
+      assert Account.list_migrations() == [migration]
+    end
+
+    test "get_migration!/1 returns the migration with given id" do
+      migration = migration_fixture()
+      assert Account.get_migration!(migration.id) == migration
+    end
+
+    test "create_migration/1 with valid data creates a migration" do
+      assert {:ok, %Migration{} = migration} = Account.create_migration(@valid_attrs)
+    end
+
+    test "create_migration/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Account.create_migration(@invalid_attrs)
+    end
+
+    test "update_migration/2 with valid data updates the migration" do
+      migration = migration_fixture()
+      assert {:ok, %Migration{} = migration} = Account.update_migration(migration, @update_attrs)
+    end
+
+    test "update_migration/2 with invalid data returns error changeset" do
+      migration = migration_fixture()
+      assert {:error, %Ecto.Changeset{}} = Account.update_migration(migration, @invalid_attrs)
+      assert migration == Account.get_migration!(migration.id)
+    end
+
+    test "delete_migration/1 deletes the migration" do
+      migration = migration_fixture()
+      assert {:ok, %Migration{}} = Account.delete_migration(migration)
+      assert_raise Ecto.NoResultsError, fn -> Account.get_migration!(migration.id) end
+    end
+
+    test "change_migration/1 returns a migration changeset" do
+      migration = migration_fixture()
+      assert %Ecto.Changeset{} = Account.change_migration(migration)
+    end
+  end
 end
