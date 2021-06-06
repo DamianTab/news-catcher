@@ -13,6 +13,8 @@ defmodule Catcher.Cache.Request do
     field :to, :naive_datetime
     field :topic, :string
 
+    many_to_many :articles, Catcher.News.Article, join_through: "requests_articles"
+
     timestamps()
   end
 
