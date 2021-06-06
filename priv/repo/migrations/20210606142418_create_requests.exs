@@ -13,6 +13,8 @@ defmodule Catcher.Repo.Migrations.CreateRequests do
       add :topic, :string
       add :sources, :string
 
+      add :pagination, :text
+
       timestamps()
     end
 

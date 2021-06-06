@@ -14,7 +14,7 @@ defmodule Catcher.News.ParamsHelper do
   end
 
   def param_not_empty?(param) do
-    String.length(String.trim(param)) != 0
+    param && String.length(String.trim(param)) != 0
   end
 
 end

@@ -1,13 +1,11 @@
 defmodule Catcher.News.ParamsMapper do
   alias Catcher.News.ArticleSearchParams
   alias Catcher.News.ParamsHelper
-  alias Catcher.Cache.Request
 
   def generate_query_params(params) do
     params
-    |>IO.inspect()
     |> Map.update("from", ArticleSearchParams.default_values().from, fn old_value -> old_value end)
-    |> Map.update("to", NaiveDateTime.to_string(NaiveDateTime.local_now()), fn old_value ->
+    |> Map.update("to", NaiveDateTime.to_string(NaiveDateTime.new!(Date.utc_today(), ~T[00:00:00])), fn old_value ->
       old_value
     end)
     |> Map.update("lang", "", fn old_value ->
@@ -29,18 +27,13 @@ defmodule Catcher.News.ParamsMapper do
   end
 
   def map_params_for_request_structure(params) do
-    client_http_params =
-      ParamsHelper.struct_keys_as_string(Request.__struct__()) --
-        ["articles", "inserted_at", "updated_at", "pagination", "id"]
-
-    IO.inspect(client_http_params)
-      # todo zrobic
     params = params
     |> Map.delete("media")
     |> Enum.map(fn {key, value} ->
-      if key == "q", do: {"query", value}, else: {key, value} end)
-
-    IO.inspect(params)
-
+      if key == "q", do: {String.to_atom("query"), value}, else: {String.to_atom(key), value} end)
+    |> Enum.map(fn {key, value} ->
+      if key in [:to, :from], do: {key, NaiveDateTime.from_iso8601!(value)}, else: {key, value} end)
+    |> Enum.map(fn {key, value} ->
+      if key in [:page, :page_size], do: {key, String.to_integer(value)}, else: {key, value} end)
   end
 end

@@ -109,4 +109,37 @@ defmodule Catcher.Cache do
   def delete_all_requests do
     Repo.delete_all(Request)
   end
+
+  def insert_with_articles!(request_struct, articles, page) do
+    page = Map.replace!(page, :mode, "cache")
+
+    %{request_struct | pagination: Jason.encode!(page)}
+    |> Repo.insert!()
+    |> Repo.preload(:articles)
+    |> Ecto.Changeset.change()
+    |> Ecto.Changeset.put_assoc(:articles, articles)
+    |> Catcher.Repo.update!()
+    |> Catcher.Repo.preload(:articles)
+
+  end
+
+  def get_by_fields_values(fake_request) do
+    Repo.one(
+      Request
+      |> where([r],
+      r.from == ^fake_request.from and
+      r.lang == ^fake_request.lang and
+      r.page == ^fake_request.page and
+      r.page_size == ^fake_request.page_size and
+      r.query == ^fake_request.query and
+      r.sort_by == ^fake_request.sort_by and
+      r.sources == ^fake_request.sources and
+      r.to == ^fake_request.to and
+      r.topic == ^fake_request.topic)
+      |> select([r], r)
+    )
+
+    # todo preload kiedy nie nul
+    # |> Repo.preload(:articles)
+  end
 end

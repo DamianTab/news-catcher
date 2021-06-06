@@ -68,8 +68,6 @@ query = Catcher.Repo.insert!(%Catcher.Cache.Request{
   sort_by: "date",
   from: ~N[2019-10-01 10:20:00],
   to: ~N[2021-01-01 00:00:00],
-  sources: nil,
-  topic: nil
 })
 |> Catcher.Repo.preload(:articles)
 
