@@ -6,38 +6,25 @@ defmodule CatcherWeb.RequestController do
 
   action_fallback CatcherWeb.FallbackController
 
-  def index(conn, _params) do
-    requests = Cache.list_requests()
-    render(conn, "index.json", requests: requests)
-  end
-
-  def create(conn, %{"request" => request_params}) do
-    with {:ok, %Request{} = request} <- Cache.create_request(request_params) do
-      conn
-      |> put_status(:created)
-      |> put_resp_header("location", Routes.request_path(conn, :show, request))
-      |> render("show.json", request: request)
-    end
+  def index(conn, params) do
+    pageable = Cache.list_requests(params)
+    render(conn, "index.json", pageable: pageable)
   end
 
   def show(conn, %{"id" => id}) do
     request = Cache.get_request!(id)
-    render(conn, "show.json", request: request)
+    PhoenixETag.render_if_stale(conn, "show.json", request: request)
   end
-
-  def update(conn, %{"id" => id, "request" => request_params}) do
-    request = Cache.get_request!(id)
-
-    with {:ok, %Request{} = request} <- Cache.update_request(request, request_params) do
-      render(conn, "show.json", request: request)
-    end
-  end
-
   def delete(conn, %{"id" => id}) do
     request = Cache.get_request!(id)
 
     with {:ok, %Request{}} <- Cache.delete_request(request) do
       send_resp(conn, :no_content, "")
     end
+  end
+
+  def delete_all(conn, _params) do
+    Cache.delete_all_requests()
+    send_resp(conn, :no_content, "")
   end
 end

@@ -15,8 +15,12 @@ defmodule CatcherWeb.Router do
     get "/news", ArticleController, :index
     get "/news/params", ArticleController, :index_params
     get "/news/:id", ArticleController, :show
-    delete "/news/", ArticleController, :delete_all
+    delete "/news", ArticleController, :delete_all
     delete "/news/:id", ArticleController, :delete
+
+    resources "/requests", RequestController, except: [:new, :edit, :update, :create]
+    delete "/requests/", RequestController, :delete_all
+
 
   end
 

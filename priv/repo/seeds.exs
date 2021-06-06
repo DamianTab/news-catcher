@@ -58,3 +58,22 @@ Ecto.Changeset.change(query)
 |> Ecto.Changeset.put_assoc(:articles, [article1, article2])
 |> Catcher.Repo.update!()
 |> Catcher.Repo.preload(:articles)
+
+
+query = Catcher.Repo.insert!(%Catcher.Cache.Request{
+  page: 1,
+  page_size: 5,
+  query: "Coronavirus",
+  lang: "en",
+  sort_by: "date",
+  from: ~N[2019-10-01 10:20:00],
+  to: ~N[2021-01-01 00:00:00],
+  sources: "google.com",
+  topic: "science"
+})
+|> Catcher.Repo.preload(:articles)
+
+Ecto.Changeset.change(query)
+|> Ecto.Changeset.put_assoc(:articles, [article1, article2])
+|> Catcher.Repo.update!()
+|> Catcher.Repo.preload(:articles)

@@ -2,8 +2,8 @@ defmodule CatcherWeb.RequestView do
   use CatcherWeb, :view
   alias CatcherWeb.RequestView
 
-  def render("index.json", %{requests: requests}) do
-    %{data: render_many(requests, RequestView, "request.json")}
+  def render("index.json", %{pageable: {requests, page}}) do
+    %{data: render_many(requests, RequestView, "request.json"), pagination: page}
   end
 
   def render("show.json", %{request: request}) do
@@ -22,4 +22,10 @@ defmodule CatcherWeb.RequestView do
       topic: request.topic,
       sources: request.sources}
   end
+
+  def stale_checks("show." <> _format, %{request: data}) do
+    [etag: PhoenixETag.schema_etag(data),
+      last_modified: PhoenixETag.schema_last_modified(data)]
+  end
+
 end

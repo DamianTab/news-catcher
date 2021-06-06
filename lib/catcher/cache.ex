@@ -17,8 +17,8 @@ defmodule Catcher.Cache do
       [%Request{}, ...]
 
   """
-  def list_requests do
-    Repo.all(Request)
+  def list_requests(params) do
+    Repo.pagination_query(Request, params)
   end
 
   @doc """
@@ -101,4 +101,9 @@ defmodule Catcher.Cache do
   def change_request(%Request{} = request, attrs \\ %{}) do
     Request.changeset(request, attrs)
   end
+
+  def delete_all_requests do
+    Repo.delete_all(Request)
+  end
+
 end
