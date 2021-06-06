@@ -4,6 +4,7 @@ defmodule Catcher.News.ParamsHelper do
     struct
     |> Map.keys()
     |> List.delete(:__struct__)
+    |> List.delete(:__meta__)
     |> Enum.map(fn key -> Atom.to_string(key) end)
   end
 

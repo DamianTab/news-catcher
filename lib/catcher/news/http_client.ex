@@ -26,6 +26,7 @@ defmodule Catcher.News.HttpClient do
       {:ok, %HTTPoison.Response{status_code: _, body: body}} ->
         raise body
         {:error, "Unknown error on search engine - contact developer."}
+
       {:error, %HTTPoison.Error{reason: reason}} ->
         {:error, reason}
     end

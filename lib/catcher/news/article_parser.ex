@@ -2,7 +2,7 @@ defmodule Catcher.News.ArticleParser do
   alias Catcher.News.Article
 
   @expected__body_fields ~w(
-    total_hits page total_pages page_size articles user_input
+    status total_hits page total_pages page_size articles user_input
   )
 
   def parse(body) do
@@ -10,17 +10,28 @@ defmodule Catcher.News.ArticleParser do
       body
       |> Jason.decode!()
       |> Map.take(@expected__body_fields)
-      |> Map.update!("articles", fn v -> deserialize_articles(v) end)
+      |> Map.update("articles", [], fn v -> deserialize_articles(v) end)
       |> Map.new(fn {k, v} -> {String.to_atom(k), v} end)
 
-    page = %{
-      mode: "search-engine",
-      page: pageable.page,
-      per_page: pageable.page_size,
-      total_counts: pageable.total_hits,
-      total_pages: pageable.total_pages,
-      search_engine_inputs: pageable.user_input
-    }
+    page = case pageable.status do
+      "ok" ->
+        %{
+          mode: "search-engine",
+          status: pageable.status,
+          page: pageable.page,
+          per_page: pageable.page_size,
+          total_counts: pageable.total_hits,
+          total_pages: pageable.total_pages,
+          search_engine_inputs: pageable.user_input
+        }
+
+      error_status ->
+         %{
+          mode: "search-engine",
+          status: error_status,
+          search_engine_inputs: pageable.user_input
+        }
+    end
 
     {pageable.articles, page}
   end

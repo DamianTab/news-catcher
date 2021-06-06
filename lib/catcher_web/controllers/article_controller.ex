@@ -54,6 +54,8 @@ defmodule CatcherWeb.ArticleController do
   defp index_from_search_engine(conn, params) do
     if ParamsHelper.param_exist_and_not_empty?("query", params) do
       efficient_params = ParamsMapper.generate_query_params(params)
+      ParamsMapper.map_params_for_request_structure(efficient_params)
+      # todo dokonczyc
 
       case HttpClient.search_articles(efficient_params) do
         {:ok, body} ->
