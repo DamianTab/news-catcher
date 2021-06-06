@@ -18,7 +18,9 @@ defmodule Catcher.Cache do
 
   """
   def list_requests(params) do
-    Repo.pagination_query(Request, params)
+    {requests, page} = Repo.pagination_query(Request, params)
+    requests = Repo.preload(requests, :articles)
+    {requests, page}
   end
 
   @doc """
@@ -35,7 +37,7 @@ defmodule Catcher.Cache do
       ** (Ecto.NoResultsError)
 
   """
-  def get_request!(id), do: Repo.get!(Request, id)
+  def get_request!(id), do: Repo.get!(Request, id) |> Repo.preload(:articles)
 
   @doc """
   Creates a request.
@@ -53,6 +55,7 @@ defmodule Catcher.Cache do
     %Request{}
     |> Request.changeset(attrs)
     |> Repo.insert()
+    |> Repo.preload(:articles)
   end
 
   @doc """
@@ -71,6 +74,7 @@ defmodule Catcher.Cache do
     request
     |> Request.changeset(attrs)
     |> Repo.update()
+    |> Repo.preload(:articles)
   end
 
   @doc """
@@ -105,5 +109,4 @@ defmodule Catcher.Cache do
   def delete_all_requests do
     Repo.delete_all(Request)
   end
-
 end

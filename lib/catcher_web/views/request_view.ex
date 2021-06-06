@@ -11,6 +11,10 @@ defmodule CatcherWeb.RequestView do
   end
 
   def render("request.json", %{request: request}) do
+    article_id_list =
+      request.articles
+      |> Enum.map(fn article -> article.id end)
+
     %{id: request.id,
       page: request.page,
       page_size: request.page_size,
@@ -20,7 +24,8 @@ defmodule CatcherWeb.RequestView do
       from: request.from,
       to: request.to,
       topic: request.topic,
-      sources: request.sources}
+      sources: request.sources,
+      articles: article_id_list}
   end
 
   def stale_checks("show." <> _format, %{request: data}) do
