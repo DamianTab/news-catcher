@@ -10,8 +10,6 @@ defmodule Catcher.Repo.Migrations.CreateFavourites do
       timestamps()
     end
 
-    create index(:favourites, [:user_id])
-    create index(:favourites, [:article_id])
     create unique_index(:favourites, [:user_id, :article_id])
   end
 end

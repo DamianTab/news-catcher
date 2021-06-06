@@ -21,7 +21,7 @@ defmodule CatcherWeb.FavouriteController do
 
   def show(conn, %{"id" => id}) do
     favourite = Account.get_favourite!(id)
-    render(conn, "show.json", favourite: favourite)
+    PhoenixETag.render_if_stale(conn, "show.json", favourite: favourite)
   end
 
   def update(conn, %{"fid" => _fid, "favourite" => %{"user_id" => _user_id, "article_id" => _article_id, "comment" => _comment}} = params) do

@@ -12,6 +12,8 @@ defmodule CatcherWeb.FavouriteView do
 
   def render("favourite.json", %{favourite: favourite}) do
     %{id: favourite.id,
+      user_id: favourite.user_id,
+      article_id: favourite.article_id,
       comment: favourite.comment}
   end
 
