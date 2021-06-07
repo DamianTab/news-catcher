@@ -206,24 +206,18 @@ defmodule Catcher.Account do
   end
 
   def migrate_users(user1, user2) do
-    list = Repo.all(Favourite
-            |> where([f], f.user_id == ^user1))
-    query = Favourite
-            |> where([f], f.user_id == ^user2)
-    for favourite <- Repo.all(query) do
-      fav_tmp = Enum.find(list, &(&1.article_id == favourite.article_id))
-      if fav_tmp != nil do
-        if fav_tmp.updated_at > favourite.updated_at do
-          delete_favourite(favourite)
-        else
-          delete_favourite(fav_tmp)
-          update_favourite(favourite, %{"user_id" => user1})
-        end
-      else
-        update_favourite(favourite, %{"user_id" => user1})
+    favourites_user1 = Repo.all(Favourite
+                                |> where([f], f.user_id == ^user1))
+    favourites_user2 = Repo.all(Favourite
+            |> where([f], f.user_id == ^user2))
+
+    for favourite <- favourites_user2 do
+      fav_tmp = Enum.find(favourites_user1, &(&1.article_id == favourite.article_id))
+      if fav_tmp do
+        delete_favourite(fav_tmp)
       end
+      update_favourite(favourite, %{"user_id" => user1})
     end
-    userToDelete = get_user!(user2)
-    delete_user(userToDelete)
+    delete_user(get_user!(user2))
   end
 end
