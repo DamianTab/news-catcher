@@ -112,18 +112,18 @@ defmodule Catcher.Cache do
 
   def insert_with_articles!(request_struct, articles, page) do
     page = Map.replace!(page, :mode, "cache")
-
     %{request_struct | pagination: Jason.encode!(page)}
+
     |> Repo.insert!()
     |> Repo.preload(:articles)
     |> Ecto.Changeset.change()
     |> Ecto.Changeset.put_assoc(:articles, articles)
-    |> Catcher.Repo.update!()
-    |> Catcher.Repo.preload(:articles)
+    |> Repo.update!()
+    |> Repo.preload(:articles)
 
   end
 
-  def get_by_fields_values(fake_request) do
+  def exist(fake_request) do
     Repo.one(
       Request
       |> where([r],

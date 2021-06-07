@@ -58,7 +58,7 @@ defmodule CatcherWeb.ArticleController do
       params_as_request_fields = ParamsMapper.map_params_for_request_structure(efficient_params)
       fake_request = struct!(Catcher.Cache.Request, params_as_request_fields)
 
-      case Cache.get_by_fields_values(fake_request) do
+      case Cache.exist(fake_request) do
         nil ->
           search_in_external_api(conn, efficient_params, fake_request)
 
