@@ -12,6 +12,11 @@ defmodule CatcherWeb.Router do
     put "/users/:id", UserController, :update
     patch "/users/:id", UserController, :patch
 
+    resources "/users/:uid/favourites", FavouriteController, except: [:new, :edit, :update]
+    delete "/users/:uid/favourites", FavouriteController, :delete_all
+    put "/users/:uid/favourites/:fid", FavouriteController, :update
+    patch "/users/:uid/favourites/:fid", FavouriteController, :patch
+
     get "/news", ArticleController, :index
     get "/news/params", ArticleController, :index_params
     get "/news/:id", ArticleController, :show

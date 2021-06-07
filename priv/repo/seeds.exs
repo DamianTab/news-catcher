@@ -41,6 +41,7 @@ article2 = Catcher.Repo.insert!(%Catcher.News.Article{
   published_date: ~N[2019-04-23 10:20:00]
 })
 
+
 query = Catcher.Repo.insert!(%Catcher.Cache.Request{
   page: 2,
   page_size: 4,
@@ -75,3 +76,15 @@ Ecto.Changeset.change(query)
 |> Ecto.Changeset.put_assoc(:articles, [article1, article2])
 |> Catcher.Repo.update!()
 |> Catcher.Repo.preload(:articles)
+
+Catcher.Repo.insert!(%Catcher.Account.Favourite{
+  user_id: 1,
+  article_id: 1,
+  comment: "Fajny artykuł"
+})
+
+Catcher.Repo.insert!(%Catcher.Account.Favourite{
+  user_id: 2,
+  article_id: 2,
+  comment: "Nie fajny artykuł"
+})
