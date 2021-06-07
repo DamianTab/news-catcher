@@ -16,7 +16,7 @@ defmodule Catcher.News.ArticleSearchParams do
   # params_list example
   @query ~s(Example: coronavirus and covid)
   @sources ~s(Example: webmd.com)
-  # w kodzie jest data wykonania zapytania czyli NaiveDateTime.to_string(NaiveDateTime.local_now())
+  # w kodzie jest data wykonania zapytania czyli NaiveDateTime.to_string(NaiveDateTime.new!(Date.utc_today(), ~T[00:00:00]))
   @to ~s(Example date format: 2021-06-01 00:00:00)
 
   @derive {Jason.Encoder, only: ~w(page page_size query lang sort_by from to topic sources)a}
@@ -43,19 +43,7 @@ defmodule Catcher.News.ArticleSearchParams do
     string_keys() -- ["x_rapidAPI_key"]
   end
 
-  def string_keys do
-    __struct__()
-    |> Map.keys()
-    |> List.delete(:__struct__)
-    |> Enum.map(fn key -> Atom.to_string(key) end)
-  end
-
-  def query_param_exist_and_not_empty?(name, params_list) do
-    Enum.find(Map.keys(params_list), fn key -> key == name end) &&
-      query_param_not_empty?(params_list[name])
-  end
-
-  def query_param_not_empty?(param) do
-    String.length(String.trim(param)) != 0
+  defp string_keys do
+    Catcher.News.ParamsHelper.struct_keys_as_string(__struct__())
   end
 end

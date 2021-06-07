@@ -23,11 +23,4 @@ defmodule Catcher.News.Article do
     |> cast(attrs, [:summary, :country, :author, :link, :language, :media, :title, :rights, :topic, :published_date])
     |> validate_required([:summary, :country, :author, :link, :language, :media, :title, :rights, :topic, :published_date])
   end
-
-  def string_keys do
-    __struct__()
-     |> Map.keys()
-     |> List.delete(:__struct__)
-     |> Enum.map(fn key -> Atom.to_string(key) end)
-   end
 end
