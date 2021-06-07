@@ -88,3 +88,15 @@ Catcher.Repo.insert!(%Catcher.Account.Favourite{
   article_id: 2,
   comment: "Nie fajny artykuł"
 })
+
+Catcher.Repo.insert!(%Catcher.Account.Favourite{
+  user_id: 3,
+  article_id: 1,
+  comment: "Średni artykuł"
+})
+
+Catcher.Repo.insert!(%Catcher.Account.Favourite{
+  user_id: 3,
+  article_id: 2,
+  comment: "Może być fajny lol"
+})

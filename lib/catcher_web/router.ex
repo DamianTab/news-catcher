@@ -12,6 +12,8 @@ defmodule CatcherWeb.Router do
     put "/users/:id", UserController, :update
     patch "/users/:id", UserController, :patch
 
+    post "/migration", MigrationController, :migration
+
     resources "/users/:uid/favourites", FavouriteController, except: [:new, :edit, :update]
     delete "/users/:uid/favourites", FavouriteController, :delete_all
     put "/users/:uid/favourites/:fid", FavouriteController, :update

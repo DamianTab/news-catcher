@@ -204,4 +204,20 @@ defmodule Catcher.Account do
   def change_favourite(%Favourite{} = favourite, attrs \\ %{}) do
     Favourite.changeset(favourite, attrs)
   end
+
+  def migrate_users(user1, user2) do
+    favourites_user1 = Repo.all(Favourite
+                                |> where([f], f.user_id == ^user1))
+    favourites_user2 = Repo.all(Favourite
+            |> where([f], f.user_id == ^user2))
+
+    for favourite <- favourites_user2 do
+      fav_tmp = Enum.find(favourites_user1, &(&1.article_id == favourite.article_id))
+      if fav_tmp do
+        delete_favourite(fav_tmp)
+      end
+      update_favourite(favourite, %{"user_id" => user1})
+    end
+    delete_user(get_user!(user2))
+  end
 end
