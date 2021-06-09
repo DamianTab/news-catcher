@@ -195,7 +195,7 @@ defmodule Catcher.Account do
   end
 
 
-  def delete_all_favourite(%{"uid" => uid} = params) do
+  def delete_all_favourite(%{"uid" => uid}) do
     Repo.delete_all((Favourite
                |> where([f], f.user_id == ^uid)))
   end
