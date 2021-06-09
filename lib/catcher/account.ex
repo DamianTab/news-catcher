@@ -132,7 +132,15 @@ defmodule Catcher.Account do
       ** (Ecto.NoResultsError)
 
   """
-  def get_favourite!(id), do: Repo.get!(Favourite, id)
+  def get_favourite!(id) do
+    Repo.get!(Favourite, id)
+  end
+
+
+  def get_favourite_with_user!(id, uid) do
+      Repo.get!(Favourite
+        |> where([f], f.user_id == ^uid), id)
+  end
 
   @doc """
   Creates a favourite.
