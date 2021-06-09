@@ -228,4 +228,10 @@ defmodule Catcher.Account do
     end
     delete_user(get_user!(user2))
   end
+
+  def exist_favourite_by_article?(uid, article_id) do
+    Repo.exists?(Favourite
+    |> where([f], f.user_id == ^uid and f.article_id == ^article_id))
+  end
+
 end

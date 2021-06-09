@@ -24,11 +24,21 @@ defmodule CatcherWeb.FavouriteController do
     PhoenixETag.render_if_stale(conn, "show.json", favourite: favourite)
   end
 
-  def update(conn, %{"fid" => _fid, "favourite" => %{"user_id" => _user_id, "article_id" => _article_id, "comment" => _comment}} = params) do
-    update_favourite(conn, params)
+  def update(conn, %{"fid" => fid, "uid" => uid, "favourite" => %{"article_id" => article_id, "comment" => comment}}) do
+    params = %{"fid" => fid, "uid" => uid, "favourite" => %{"article_id" => article_id, "comment" => comment}}
+    case Account.exist_favourite_by_article?(uid, article_id) do
+      true ->
+        conn
+        |> put_status(:bad_request)
+        |> put_view(CatcherWeb.ErrorView)
+        |> render("article_already_in_favourties.json")
+      false ->
+        update_favourite(conn, params)
+    end
   end
 
-  def patch(conn, %{"fid" => _fid, "favourite" => %{"comment" => _comment}} = params) do
+  def patch(conn, %{"fid" => fid, "uid" => uid, "favourite" => %{"comment" => comment}}) do
+    params = %{"fid" => fid, "uid" => uid, "favourite" => %{"comment" => comment}}
     update_favourite(conn, params)
   end
 
