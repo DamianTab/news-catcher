@@ -2,13 +2,12 @@ defmodule CatcherWeb.EtagHelper do
 
   def etag_matches?(conn, data) do
     etag = PhoenixETag.schema_etag(data)
-    none_match = List.first Plug.Conn.get_req_header(conn, "if-none-match")
-    if none_match && etag do
-      none_match = Plug.Conn.Utils.list(none_match)
-      ("*" in none_match && NaiveDateTime.to_string(data.inserted_at)) == NaiveDateTime.to_string(data.updated_at)
-        || etag in none_match
+    if_match = List.first Plug.Conn.get_req_header(conn, "if-match")
+    if if_match && etag do
+      if_match = Plug.Conn.Utils.list(if_match)
+      ("*" in if_match || etag in if_match)
     else
-      true
+      false
     end
   end
 
