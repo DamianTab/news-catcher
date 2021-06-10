@@ -2,11 +2,14 @@ defmodule Catcher.Account do
   @moduledoc """
   The Account context.
   """
-
+  require Logger
   import Ecto.Query, warn: false
   alias Catcher.Repo
 
   alias Catcher.Account.User
+
+  # in seconds
+  @delete_outdated_data -120
 
   @doc """
   Returns the list of users.
@@ -232,6 +235,35 @@ defmodule Catcher.Account do
   def exist_favourite_by_article?(uid, article_id) do
     Repo.exists?(Favourite
     |> where([f], f.user_id == ^uid and f.article_id == ^article_id))
+  end
+
+
+  def clean_users do
+    default_user = %User{}
+    delete_from_date = NaiveDateTime.add(NaiveDateTime.utc_now() , @delete_outdated_data)
+
+    {count, id_list} = Repo.delete_all(User
+    |> select([u], u.id)
+    |> where([u], u.email == ^default_user.email
+      and u.nick == ^default_user.nick
+      and u.inserted_at == u.updated_at
+      and u.inserted_at < ^delete_from_date)
+    )
+    Logger.info  "Database Garbage Collector - Deleted #{inspect(count)} users with id: #{inspect(id_list, charlists: :as_lists)}"
+  end
+
+  def clean_favourites do
+    default_favourite = %Favourite{}
+    delete_from_date = NaiveDateTime.add(NaiveDateTime.utc_now() , @delete_outdated_data)
+
+    {count, id_list} = Repo.delete_all(Favourite
+    |> select([f], f.id)
+    |> where([f], is_nil(f.article_id)
+      and f.comment == ^default_favourite.comment
+      and f.inserted_at == f.updated_at
+      and f.inserted_at < ^delete_from_date)
+    )
+    Logger.info  "Database Garbage Collector - Deleted #{inspect(count)} favourites with id: #{inspect(id_list, charlists: :as_lists)}"
   end
 
 end

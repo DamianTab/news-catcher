@@ -14,9 +14,12 @@ defmodule Catcher.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: Catcher.PubSub},
       # Start the Endpoint (http/https)
-      CatcherWeb.Endpoint
+      CatcherWeb.Endpoint,
       # Start a worker by calling: Catcher.Worker.start_link(arg)
       # {Catcher.Worker, arg}
+
+      # Database Garbage Collector
+      Catcher.DatabaseGarbageCollector
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
