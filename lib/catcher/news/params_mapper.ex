@@ -14,15 +14,15 @@ defmodule Catcher.News.ParamsMapper do
       if old_value not in ArticleSearchParams.default_values().sort_by, do: "", else: old_value end)
     |> Map.update("topic", "", fn old_value ->
       if old_value not in ArticleSearchParams.default_values().topic, do: "", else: old_value end)
-    # filtrowanie pustych paramsów
+    # Filter empty params
     |> Enum.filter(fn {_key, value} -> ParamsHelper.param_not_empty?(value) end)
-    # filtrowanie żeby nie było jakiś dziwnych paramsów (tylko te zdefiniowane)
+    # Filter to remove unsupport params (we are using only those that are explicitly defined)
     |> Enum.filter(fn {key, _value} -> key in ArticleSearchParams.valid_string_keys() end)
-    # zamiana query na q
+    # change "query" for "q"
     |> Map.new(fn {key, value} ->
       if key == "query", do: {"q", value}, else: {key, value}
     end)
-    # Należy dodać ponieważ to zawsze będzie występować i nie ma tego w ArticleSearchParams
+    # We must add this because it always exist and there is not in ArticleSearchParams
     |> Map.put("media", "True")
   end
 

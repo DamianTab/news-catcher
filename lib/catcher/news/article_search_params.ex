@@ -16,7 +16,7 @@ defmodule Catcher.News.ArticleSearchParams do
   # params_list example
   @query ~s(Example: coronavirus and covid)
   @sources ~s(Example: webmd.com)
-  # w kodzie jest data wykonania zapytania czyli NaiveDateTime.to_string(NaiveDateTime.new!(Date.utc_today(), ~T[00:00:00]))
+  #  In code there is query execution time: NaiveDateTime.to_string(NaiveDateTime.new!(Date.utc_today(), ~T[00:00:00]))
   @to ~s(Example date format: 2021-06-01 00:00:00)
 
   @derive {Jason.Encoder, only: ~w(page page_size query lang sort_by from to topic sources)a}

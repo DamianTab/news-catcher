@@ -45,7 +45,7 @@ defmodule Catcher.News.ArticleParser do
     end)
   end
 
-  # zamiana kluczy na atomy + wyeliminowanie pustych wartości
+  # change keys for atoms + eliminate empty values
   defp remap_for_atoms_and_nil_values(map) do
     map
     |> Map.new(fn {k, v} ->
